@@ -43,7 +43,7 @@ NFV thường được triển khai kết hợp với **SDN (Software-Defined Ne
 | **NFV**  | Ảo hóa chức năng mạng | Xử lý dịch vụ ở tầng VNF |
 | **SDN**  | Tách Control-plane và Data-plane | Điều khiển đường đi của luồng gói tin |
 
-➡️ SDN điều khiển luồng, NFV xử lý luồng → tạo thành hệ sinh thái **5G linh hoạt**.
+SDN điều khiển luồng, NFV xử lý luồng → tạo thành hệ sinh thái **5G linh hoạt**.
 
 ---
 
@@ -79,7 +79,7 @@ Các giai đoạn chính của VNF:
 5. Updating / Patching  
 6. Termination  
 
-⚠️ Malware trong tấn công **Supply Chain** thường được cấy tại bước **1, 4 hoặc 5**.
+Malware trong tấn công **Supply Chain** thường được cấy tại bước **1, 4 hoặc 5**.
 
 ---
 
@@ -100,7 +100,7 @@ User Traffic ↓ +--------------------------+ |     VNF Chain (SFC)      | | vFi
 - Control-plane: SMF, AMF → điều khiển phiên kết nối  
 - Data-plane: UPF → xử lý lưu lượng người dùng  
 
-➡️ Tấn công vào **UPF** có thể nghe lén/chuyển hướng toàn bộ traffic.  
+Tấn công vào **UPF** có thể nghe lén/chuyển hướng toàn bộ traffic.  
 
 **Network Slicing:**  
 - Cho phép tạo các slice độc lập cho từng dịch vụ  
