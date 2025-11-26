@@ -1,5 +1,5 @@
 # PHÂN TÍCH NGUY CƠ BẢO MẬT TRONG HẠ TẦNG MẠNG ẢO HÓA (NFV) VÀ 5G
-**English Title:** *Experimental Analysis of Security Threats in NFV Infrastructure: Supply Chain Attack Simulation and Defensive Mechanisms*
+ *Experimental Analysis of Security Threats in NFV Infrastructure: Supply Chain Attack Simulation and Defensive Mechanisms*
 
 ---
 
@@ -18,7 +18,6 @@ NFV ra đời để giải quyết vấn đề này bằng cách **phần mềm 
 
 ---
 
-# 📘 NFV Background & Security Analysis
 
 ## 2. Kiến thức nền về NFV (Background)
 
