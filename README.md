@@ -161,14 +161,56 @@ User → vFirewall → vIDS → vRouter → Internet
 4. **Kích hoạt:** VNF độc hại gửi traffic ngược về C2, vượt qua firewall vì nằm ngay trong chuỗi xử lý  
 
 ---
-## 4. Demo (mô phỏng 1 cuộc tấn công)
+## 4.Phân tích Rủi ro Bảo mật Tiên tiến 
+###4.1.Lỗ Hổng Kiến Trúc NFV và Vấn đề Tính Toàn vẹn VNF
+Rủi ro lớn nhất không nằm ở biên mạng, mà ở tính toàn vẹn (Integrity) của các Virtual Network Functions (VNF) và Containerized Network Functions (CNF) được triển khai.
 
+####4.1.1. Tấn công Chuỗi Cung ứng Nhắm vào Tính Toàn vẹn VNF (VNF Integrity Attack)
+Bản chất rủi ro: Khác với tấn công mạng thông thường, kiểu tấn công này nhắm vào khâu phát triển, lưu trữ, hoặc phân phối phần mềm. Các nhà mạng phụ thuộc vào nhiều nhà cung cấp VNF (third-party vendors), tạo ra một Chuỗi Cung ứng Phần mềm rộng lớn và phức tạp.
 
+Thực nghiệm đáng quan tâm: Kẻ tấn công có thể cấy mã độc hoặc Backdoor vào file ảnh VNF (.qcow2, Docker image) ngay tại kho lưu trữ hoặc trong quá trình cập nhật (MITM). Mã độc được triển khai đồng thời với chức năng mạng, tạo ra một VNF độc hại hợp lệ.
+
+Hậu quả: Tấn công chuỗi cung ứng VNF bỏ qua tất cả các lớp bảo mật ngoại vi và thâm nhập ngay vào trung tâm mạng lõi (NFVI), đạt được quyền truy cập Zero Trust vào các tài nguyên nội bộ.
+
+####4.1.2. Mất Ranh giới Bảo mật Nội bộ (Zero Trust Boundary)
+Bản chất rủi ro: Kiến trúc 5G Core dựa trên Service-Based Architecture (SBA), nơi các chức năng mạng (AMF, SMF, UPF, NRF) giao tiếp qua Service Mesh và được coi là đáng tin cậy.
+
+Hậu quả: Nếu một VNF bị chiếm (thông qua tấn công Chuỗi cung ứng), nó có thể thực hiện lây lan ngang (Lateral Movement) tới các VNF quan trọng khác mà không bị chặn bởi các rào cản mạng nội bộ (Internal Firewall) nghiêm ngặt. Đây là lỗ hổng kiến trúc cho phép leo thang từ Data Plane sang Control Plane.
+
+###4.2.  Rủi Ro Leo Thang Tấn công Lên Control Plane
+Việc chiếm quyền một VNF xử lý lưu lượng có thể dẫn đến việc chiếm quyền điều phối toàn bộ hạ tầng mạng.
+
+####4.2.1. Tấn công vào UPF (User Plane Function)
+Tầm quan trọng: UPF là chức năng mạng quan trọng nhất trong 5G, xử lý toàn bộ lưu lượng dữ liệu người dùng (Data Plane).
+
+Rủi ro thực tế: Bằng cách chiếm quyền UPF (như trong mô phỏng của chúng ta), kẻ tấn công có thể:
+
+Nghe lén (Eavesdropping) và chuyển hướng (Traffic Redirection) hàng loạt phiên người dùng.
+
+Gây DoS cục bộ bằng cách làm tắc nghẽn hoặc ngừng xử lý lưu lượng tại VNF này.
+
+Sử dụng UPF bị chiếm làm bàn đạp (Pivot) để tấn công các thành phần Control Plane như SMF hoặc AMF.
+
+####2.2. Khai thác Lỗ hổng API của MANO/NFVO
+Bản chất rủi ro: Sau khi chiếm quyền VNF, kẻ tấn công sẽ thực hiện lây lan để nhắm vào MANO (Management and Orchestration) trên Control Plane. MANO điều phối toàn bộ vòng đời của VNF/CNF thông qua các API.
+
+Hậu quả Thảm khốc (Zombie Strategy): Chiếm quyền MANO cho phép kẻ tấn công:
+
+Thao túng quy trình Orchestration: Ra lệnh TERMINATE tất cả các VNF hợp lệ, gây Từ chối Dịch vụ (DoS) cho toàn bộ mạng 5G.
+
+Triển khai hàng loạt Zombie: Thực hiện lệnh SCALE-OUT VNF độc hại trên diện rộng (tạo ra nhiều Zombie VNF) để tạo ra một cuộc Tấn công Từ chối Dịch vụ Phân tán (DDoS) quy mô lớn từ bên trong mạng lõi.
+
+###3.  Mối Đe Dọa Mới đối với Network Slicing
+Bản chất rủi ro: Network Slicing (tính năng cốt lõi của 5G) cho phép tạo ra các mạng ảo độc lập. Việc kiểm soát NFVO (một phần của MANO) cho phép kiểm soát tính năng này.
+
+Mối đe dọa: Kẻ tấn công có thể thao túng ranh giới các Slice bằng cách chèn VNF độc hại vào một Slice cụ thể hoặc chuyển hướng lưu lượng từ một Slice an toàn (ví dụ: Slice IoT, Critical Service) sang Slice bị giám sát/kiểm soát. Đây là mối đe dọa cực kỳ nghiêm trọng đối với tính riêng tư và bảo mật dịch vụ phân tách.
+
+## 5. Thực nghiệm ()
 
 
 
 --- 
-## 5. Kết luận (Conclusion)
+## 6. Kết luận (Conclusion)
 NFV là nền tảng bắt buộc trong hạ tầng 5G, mang lại nhiều lợi ích về chi phí và linh hoạt. Tuy nhiên, nó cũng mở rộng bề mặt tấn công, đặc biệt ở khâu chuỗi cung ứng VNF. Việc nghiên cứu, mô phỏng và kiểm thử các kịch bản tấn công là cần thiết để xây dựng cơ chế phòng vệ hiệu quả, đảm bảo tính toàn vẹn và an toàn cho hạ tầng viễn thông quốc gia.
 
 ---
